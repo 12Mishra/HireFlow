@@ -1,5 +1,6 @@
 import Recruiter from "../models/recruiter.model.js";
 import generateToken from "../services/authRecruiter.js";
+import JobPosting from "../models/jobPosting.model.js";
 
 export async function handleSignup(req, res) {
     const { recruitername, company, email, password } = req.body;
@@ -80,5 +81,21 @@ export async function handleProfile(req, res){
             error: error.message
         });
         
+    }
+}
+
+export async function handlemyJobPostings(req, res){
+    const recruiterdata = req.recruiterPayload; 
+
+    const recruiterId = recruiterdata.id;
+    const recruiter= await Recruiter.findById(recruiterId);
+
+    try {
+        const jobs = await JobPosting.find({ createdBy: recruiter });
+        console.log("Jobs Found:", jobs); 
+        res.status(200).json({ jobs });
+    } catch (error) {
+        console.error('Error fetching recruiter job postings:', error);
+        res.status(500).json({ message: "Server error", error });
     }
 }

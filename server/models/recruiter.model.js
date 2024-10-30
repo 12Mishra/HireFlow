@@ -26,7 +26,7 @@ const recruiterSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: "recruiter",
+        default: "Recruiter",
     },
     created: {
         type: Date,

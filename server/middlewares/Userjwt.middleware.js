@@ -3,7 +3,7 @@ dotenv.config();
 
 import jwt from 'jsonwebtoken';
 
-function jwtAuthMiddleware(req, res, next) {
+function jwtAuthMiddlewareUser(req, res, next) {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 
@@ -21,4 +21,4 @@ function jwtAuthMiddleware(req, res, next) {
     }
 }
 
-export default jwtAuthMiddleware;
+export default jwtAuthMiddlewareUser;
