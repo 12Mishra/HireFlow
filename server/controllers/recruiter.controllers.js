@@ -5,7 +5,6 @@ import JobPosting from "../models/jobPosting.model.js";
 export async function handleSignup(req, res) {
     const { recruitername, company, email, password } = req.body;
     
-    
     try {
         const existingRecruiter = await Recruiter.findOne({ email });
 

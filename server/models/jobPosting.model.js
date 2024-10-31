@@ -34,6 +34,10 @@ const jobPostingSchema = new mongoose.Schema({
         type: Date,
         default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     },
+    applicationCount:{
+        type:Number,
+        default:0
+    },
     createdBy:{
         type:Object,
         ref:"recruiter"

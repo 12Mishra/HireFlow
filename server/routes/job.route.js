@@ -9,3 +9,4 @@ jobRouter.post('/addjob',jwtAuthMiddlewareRecruiter, handleJobPosting);
 jobRouter.get('/jobopenings', jwtAuthMiddlewareUser, handleJobOpenings);
 
 export default jobRouter;
+

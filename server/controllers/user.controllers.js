@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import generateToken from "../services/authUser.js";
 import JobPosting from "../models/jobPosting.model.js";
+import jobProfile from "../models/jobprofile.model.js";
+import Application from "../models/application.model.js";
 
 export async function handleUserSignup(req, res) {
     const { username, email, age, password } = req.body;
@@ -90,33 +92,101 @@ export async function handleDisplayJobs(req, res) {
     }
 }
 
-export async function handleJobApplicatiob(req, res) {
+export async function handleJobProfile(req, res) {
+    const user_id = req.userPayload.id;
+
+    try {
+        const user = await User.findById(user_id);
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found'
+            });
+        }
+    
+        const { location, aboutme, techskills, degree } = req.body; 
+        console.log(req.body);
+        
+        const existingProfile = await jobProfile.findOne({ email: user.email });
+
+        if (existingProfile) {
+            return res.status(400).json({
+                message: "Profile already exists for this user"
+            });
+        }
+
+        const jobProfileData = {
+            name: user.username, 
+            email: user.email,
+            location,
+            aboutme,
+            techskills,
+            degree, 
+            userId:user_id
+        };
+
+        const profile = await jobProfile.create(jobProfileData);
+        console.log(profile);
+        
+        return res.status(201).json({
+            message: 'Job profile created successfully',
+            profile,
+        });
+
+    } catch (error) {
+        console.error('Error creating job profile:', error);
+        return res.status(500).json({
+            message: 'An error occurred while creating the job profile',
+        });
+    }
+}
+
+
+export async function handleJobApplication(req, res) {
     const job_id = req.params.id;
-    const user_id = req.user.id;
+    const user_id = req.userPayload.id;
+
+    const { pastexp, content, companyExpectations } = req.body; 
+
     try {
         const job = await JobPosting.findById(job_id);
         if (!job) {
             return res.status(404).json({ message: 'Job not found' });
         }
-        
+
+        const user = await jobProfile.findOne({ userId: user_id }); // Use userId to find the job profile
+        if (!user) {
+            return res.status(404).json({ message: 'User profile not found' });
+        }
+
         const existingApplication = await Application.findOne({ user: user_id, job: job_id });
         if (existingApplication) {
             return res.status(400).json({ message: 'You have already applied for this job' });
         }
 
         const newApplication = new Application({
-            user: userId,
-            job: jobId,
+            name: user.name, 
+            email: user.email,
+            location: user.location,
+            aboutme: user.aboutme,
+            techskills: user.techskills,
+            degree: user.degree,
+            pastexp,
+            content,
+            companyExpectations
         });
 
+        // Increment the application count
+        job.applicationCount += 1;
+
+        // Save both the job and application
+        await job.save();
         await newApplication.save();
 
         return res.status(201).json({ message: 'Application submitted successfully', application: newApplication });
 
-    }
-
-    catch (error) {
-        console.error(error);
+    } catch (error) {
+        console.error('Error during job application:', error);
         return res.status(500).json({ message: 'Server error' });
     }
 }
+

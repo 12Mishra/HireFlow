@@ -1,25 +1,42 @@
 import mongoose from 'mongoose';
 
 const applicationSchema = new mongoose.Schema({
-    user: {
-        type: Object,
-        ref: 'User', 
-        required: true,
+    name:{
+        type:String,
+        ref:"JobPosting",
     },
-    job: {
-        type: Object,
-        ref: 'JobPosting', 
-        required: true,
+    email:{
+        type:String,
+        ref:"JobPosting",
     },
-    status: {
-        type: String,
-        enum: ['Applied', 'Interview', 'Offer', 'Rejected'],
-        default: 'Applied', 
+    location:{
+        type:String,
+        ref:"JobPosting"
     },
-    appliedDate: {
-        type: Date,
-        default: Date.now, 
+    aboutme:{
+        type:String,
+        ref:"JobPosting"
     },
+    techskills:{
+        type:[String],
+        ref:"JobPosting"
+    },
+    degree:{
+        type:[String],
+        ref:"JobPosting"
+    },
+    pastexp:{
+        type:String,
+        required:true
+    },
+    content:{  // why do you think you fit for this job
+        type:String,
+        required:true
+    },
+    companyExpectations:{
+        type:String,
+        required:true
+    }
 });
 
 const Application = mongoose.model('Application', applicationSchema);

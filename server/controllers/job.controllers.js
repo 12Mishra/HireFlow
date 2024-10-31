@@ -7,12 +7,11 @@ export async function handleJobPosting(req, res){
     try {
         const recruiterdata = req.recruiterPayload;
         const recruiterId=recruiterdata.id;
-        const recruiter= await Recruiter.findById(recruiterId);
 
-        const job = new JobPosting({ jobTitle,companyName, location, jobType, salary, description,  createdBy: recruiter  });
-        await job.save();
-        console.log(job);
+        const job = new JobPosting({ jobTitle, companyName, location, jobType, salary, description, createdBy: recruiterId  });
         
+        await job.save();
+
         res.status(201).json({ message: "Job posted successfully." });
     } catch (error) {
         console.error('Error during posting job:', error);
