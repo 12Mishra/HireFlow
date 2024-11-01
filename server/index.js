@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.route.js';
 import recruiterRouter from './routes/recruiter.route.js';
 import jobRouter from './routes/job.route.js';
+import cors from 'cors'
 
 const app=express();
 const PORT=process.env.PORT;
@@ -19,6 +20,13 @@ connect(process.env.MONGO_URI).then(()=>{
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}
+))
+
 
 app.use('/user', userRouter);
 app.use('/recruiter', recruiterRouter);

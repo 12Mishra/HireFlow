@@ -12,7 +12,6 @@ export default function LoginPageUser() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    setLoading(true);
     setError(""); 
 
     try {
@@ -32,11 +31,9 @@ export default function LoginPageUser() {
         }, 2000);
       }
     } catch (error) {
-      console.error("Login error:", error.response ? error.response.data : error.message);
+      console.error("Login error:", error.message);
       setError("Login failed! Please check your credentials.");
-    } finally {
-      setLoading(false);
-    }
+    } 
   }
 
   return (

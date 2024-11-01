@@ -13,7 +13,9 @@ export async function handleUserSignup(req, res) {
             return res.status(400).json({ message: "User already exists." });
         }
 
+        console.log("hi");
         const user = new User({ username, email, age, password });
+
         await user.save();
 
         const userPayload = {
@@ -23,7 +25,10 @@ export async function handleUserSignup(req, res) {
 
         const token = generateToken(userPayload);
 
+        res.cookie("authToken", token, { httpOnly: false, maxAge: 1000 * 60 * 60 * 24 });
+
         res.status(201).json({ message: "User registered successfully.", token });
+
     } catch (error) {
         console.error('Error during signup:', error);
         res.status(500).json({ message: "Server error", error });
@@ -43,9 +48,8 @@ export async function handleUserSignin(req, res) {
         }
 
         res.cookie('authToken', token, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24,
-            sameSite: 'strict'
+            httpOnly: false,
+            maxAge: 1000 * 60 * 60 * 24, 
         });
 
         return res.status(200).json({ message: 'Login successful', user: { email }, token: { token } });
@@ -94,18 +98,21 @@ export async function handleDisplayJobs(req, res) {
 
 export async function handleJobProfile(req, res) {
     const user_id = req.userPayload.id;
-
+    console.log(user_id);
+    
     try {
         const user = await User.findById(user_id);
+
         if (!user) {
             return res.status(404).json({
                 message: 'User not found'
             });
         }
-    
-        const { location, aboutme, techskills, degree } = req.body; 
+
+        const { location, aboutme, techskills, degree } = req.body;
+
         console.log(req.body);
-        
+
         const existingProfile = await jobProfile.findOne({ email: user.email });
 
         if (existingProfile) {
@@ -115,18 +122,18 @@ export async function handleJobProfile(req, res) {
         }
 
         const jobProfileData = {
-            name: user.username, 
+            name: user.username,
             email: user.email,
             location,
             aboutme,
             techskills,
-            degree, 
-            userId:user_id
+            degree,
+            userId: user_id
         };
 
         const profile = await jobProfile.create(jobProfileData);
         console.log(profile);
-        
+
         return res.status(201).json({
             message: 'Job profile created successfully',
             profile,
@@ -145,7 +152,7 @@ export async function handleJobApplication(req, res) {
     const job_id = req.params.id;
     const user_id = req.userPayload.id;
 
-    const { pastexp, content, companyExpectations } = req.body; 
+    const { pastexp, content, companyExpectations } = req.body;
 
     try {
         const job = await JobPosting.findById(job_id);
@@ -153,7 +160,7 @@ export async function handleJobApplication(req, res) {
             return res.status(404).json({ message: 'Job not found' });
         }
 
-        const user = await jobProfile.findOne({ userId: user_id }); // Use userId to find the job profile
+        const user = await jobProfile.findOne({ userId: user_id }); 
         if (!user) {
             return res.status(404).json({ message: 'User profile not found' });
         }
@@ -164,7 +171,7 @@ export async function handleJobApplication(req, res) {
         }
 
         const newApplication = new Application({
-            name: user.name, 
+            name: user.name,
             email: user.email,
             location: user.location,
             aboutme: user.aboutme,
@@ -174,11 +181,9 @@ export async function handleJobApplication(req, res) {
             content,
             companyExpectations
         });
-
-        // Increment the application count
+        
         job.applicationCount += 1;
 
-        // Save both the job and application
         await job.save();
         await newApplication.save();
 

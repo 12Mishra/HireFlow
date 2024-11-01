@@ -40,7 +40,7 @@ const jobPostingSchema = new mongoose.Schema({
     },
     createdBy:{
         type:Object,
-        ref:"recruiter"
+        ref:"Recruiter"
     }
 }); 
 

@@ -22,11 +22,13 @@ export async function handleSignup(req, res) {
             role:recruiter.role
         };
 
-        console.log(recruiterPayload);
-
         const token = generateToken(recruiterPayload);
-        console.log(token);
-        
+
+        res.cookie('authRecruiterToken', token, {
+            httpOnly: false,
+            maxAge: 1000 * 60 * 60 * 24, 
+        });
+
         res.status(201).json({ message: "Recruiter registered successfully." , token});
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
@@ -48,9 +50,8 @@ export async function handleSignin(req, res) {
         }
   
         res.cookie('authRecruiterToken', token, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 1000 * 60 * 60 * 24,
-            sameSite: 'strict'
         });
 
         return res.status(200).json({ message: 'Login successful', user: { email }, token: {token}}); 

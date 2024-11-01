@@ -60,6 +60,7 @@ userSchema.static('matchPasswordAndGenerateToken', async function(email, passwor
         if (!isMatch) return false;
         
         const token = generateToken({ id: user._id, role: user.role }); 
+        
         return token;
     } catch (error) {
         console.error('Error matching password:', error); 
