@@ -32,7 +32,7 @@ const jobPostingSchema = new mongoose.Schema({
     },
     closingDate: {
         type: Date,
-        default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        default: () => new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
     },
     applicationCount:{
         type:Number,

@@ -1,39 +1,9 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useRecruiterAuth } from '../../hooks/useAuth';
 
 export default function LoginPageRecruiter() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    setError("");
-
-    try {
-      const response = await axios.post("http://localhost:9000/recruiter/auth/login", {
-        email,
-        password,
-      }, 
-      {
-        withCredentials: true,
-      });
-
-      if (response.status === 200) {
-        setSuccess("Signup successful! Redirecting...");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Login error:");
-      setError("Login failed! Please check your credentials.");
-    } 
-  }
+  const { emailRecruiter, setEmailRecruiter, passwordRecruiter, setPasswordRecruiter, success, error, handleLoginRecruiter } = useRecruiterAuth();
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -44,7 +14,7 @@ export default function LoginPageRecruiter() {
         {error && <p className="text-red-500 text-center">{error}</p>}
         {success && <p className="text-green-500 text-center">{success}</p>}
         
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLoginRecruiter}>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="companyemail">
               Company Email
@@ -54,8 +24,8 @@ export default function LoginPageRecruiter() {
               id="companyemail"
               className="w-full p-2 border rounded"
               placeholder="Enter your Company Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={emailRecruiter}
+              onChange={(e) => setEmailRecruiter(e.target.value)}
               required
             />
           </div>
@@ -68,8 +38,8 @@ export default function LoginPageRecruiter() {
               id="password"
               className="w-full p-2 border rounded"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={passwordRecruiter}
+              onChange={(e) => setPasswordRecruiter(e.target.value)}
               required
             />
           </div>

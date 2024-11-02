@@ -4,17 +4,16 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Divider,
   Image,
 } from "@nextui-org/react";
-import companyLogo from "../../../src/assets/companyLogo.png"; 
-import Loader from "../../components/common/Loader"; 
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import companyLogo from "../../../src/assets/companyLogo.png";
+import Loader from "../../components/common/Loader";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 export default function JobDetail() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -24,16 +23,22 @@ export default function JobDetail() {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:9000/user/jobs/${id}`, {
-          headers: {
-            Authorization: `Bearer ${userCookie}`,
-          },
-        });
+        const response = await axios.get(
+          `http://localhost:9000/user/jobs/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${userCookie}`,
+            },
+          }
+        );
 
-        setJob(response.data.jobs); 
-        
+        setJob(response.data.jobs);
       } catch (error) {
-        setError(error.response ? error.response.data.message : "Failed to fetch job details");
+        setError(
+          error.response
+            ? error.response.data.message
+            : "Failed to fetch job details"
+        );
       } finally {
         setLoading(false);
       }
@@ -41,21 +46,6 @@ export default function JobDetail() {
 
     fetchJobDetails();
   }, [id, userCookie]);
-
-  const handleApply = async () => {
-    try {
-      const response = await axios.post(`http://localhost:9000/user/jobs/${id}`, {
-        jobId: id, 
-      }, {
-        headers: {
-          Authorization: `Bearer ${userCookie}`,
-        },
-      });
-      alert("Successfully applied for the job!");
-    } catch (error) {
-      setError(error.response ? error.response.data.message : "Failed to apply for the job");
-    }
-  };
 
   if (loading) {
     return <Loader />;
@@ -66,7 +56,9 @@ export default function JobDetail() {
   }
 
   if (!job) {
-    return <div className="text-gray-500 text-center p-4">No job details found.</div>;
+    return (
+      <div className="text-gray-500 text-center p-4">No job details found.</div>
+    );
   }
 
   return (
@@ -97,17 +89,19 @@ export default function JobDetail() {
               <span className="font-semibold text-gray-700">Salary:</span>
               <span className="text-gray-600 ml-2">{job.salary}</span>
             </div>
+            <div className="flex flex-col">
+              <span className="text-sm text-gray-700">
+                <strong>Posted on:</strong>{" "}
+                {new Date(job.postedDate).toLocaleString()}
+              </span>
+              <span className="text-sm text-gray-700">
+                <strong>Deadline :</strong>{" "}
+                {new Date(job.closingDate).toLocaleString()}
+              </span>
+            </div>
           </div>
         </CardBody>
         <Divider />
-        <CardFooter className="p-4 bg-gray-50">
-          <button
-            onClick={handleApply}
-            className="w-full bg-black text-white py-2 px-4 rounded-lg"
-          >
-            Apply Now
-          </button>
-        </CardFooter>
       </Card>
     </div>
   );

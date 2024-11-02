@@ -1,41 +1,10 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useUserAuth } from '../../hooks/useAuth';
 
 export default function LoginPageUser() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
-  const navigate = useNavigate();
-
-  async function handleLogin(e) {
-    e.preventDefault();
-    setError(""); 
-
-    try {
-      const response = await axios.post("http://localhost:9000/user/auth/login", {
-        email,
-        password,
-      }, 
-      {
-        withCredentials: true,
-      }
-    );
-
-      if (response.status === 200) {
-        setSuccess("Signup successful! Redirecting...");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error) {
-      console.error("Login error:", error.message);
-      setError("Login failed! Please check your credentials.");
-    } 
-  }
-
+  const { email, setEmail, password, setPassword, success, error, handleLoginUser } = useUserAuth();
+  
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="bg-white p-6 rounded-lg shadow-md w-80">
@@ -47,7 +16,7 @@ export default function LoginPageUser() {
         {error && <div className="text-red-500 text-center mb-4">{error}</div>}
         {success && <p className="text-green-500 text-center">{success}</p>}
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLoginUser}>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2" htmlFor="email">
               Email

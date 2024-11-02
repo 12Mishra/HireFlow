@@ -1,49 +1,9 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useUserAuth } from "../../hooks/useAuth";
 
 export default function SignupPageUser() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const navigate = useNavigate();
-
-  async function handleSignup(e) {
-    e.preventDefault();
-
-    if (isNaN(age) || age < 0) {
-      setError("Please enter a valid age.");
-      return;
-    }
-
-    setError(""); 
-    setSuccess(""); 
-
-    try {
-      const response = await axios.post("http://localhost:9000/user/auth/signup", {
-        username,
-        email,
-        age,
-        password,
-      }, {
-        withCredentials: true,
-      });
-
-      if (response.status === 201) {
-        setSuccess("Signup successful! Redirecting...");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error) {
-      setError("Error occurred! Please check your credentials.");
-    }
-  }
+  
+  const { username, setUsername, email, setEmail, age, setAge, password, setPassword, error, success, handleSignupUser } = useUserAuth();
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -54,7 +14,7 @@ export default function SignupPageUser() {
         </span>
         {error && <div className="text-red-500 text-center">{error}</div>}
         {success && <div className="text-green-500 text-center">{success}</div>}
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignupUser}>
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Username</label>
             <input

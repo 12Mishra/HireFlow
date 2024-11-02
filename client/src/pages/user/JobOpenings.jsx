@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Card,
   CardHeader,
@@ -7,48 +7,25 @@ import {
   Divider,
   Image,
 } from "@nextui-org/react";
-import Cookies from "js-cookie";
 import companyLogo from "../../assets/companyLogo.png";
-import Loader from "../../components/common/Loader";
 import { Link as RouterLink } from "react-router-dom";
+import Loader from "../../components/common/Loader";
+import useSearch from "../../hooks/useSearch";
+import { useJobListing } from "../../hooks/useJobListing";
 
 export default function JobOpenings() {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const {
+    searchedJobs,
+    loading,
+    error,
+    searchedValue,
+    setSearchedValue,
+    handleSearch,
+  } = useSearch();
 
-  const userCookie = Cookies.get("authToken");
+  const { jobs } = useJobListing();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch("http://localhost:9000/jobs", {
-          credentials: "include",
-          headers: {
-            Authorization: `Bearer ${userCookie}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch jobs");
-        }
-
-        const data = await response.json();
-        setJobs(data.jobs);
-      } catch (error) {
-        setError("Failed to load job openings.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchJobs();
-  }, [userCookie]);
-
-  if (loading) {
-    return <Loader />;
-  }
-
+  if (loading) return <Loader />;
   if (error) {
     return (
       <div className="text-red-500 text-center p-4 font-medium rounded-lg bg-red-50">
@@ -62,7 +39,25 @@ export default function JobOpenings() {
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
         Currently Available Job Openings
       </h1>
-
+      <form className="mb-6" onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search jobs"
+          value={searchedValue}
+          onChange={(e) => setSearchedValue(e.target.value)}
+          className="p-2 border rounded w-full"
+          aria-label="Job search input"
+        />
+        <button
+          type="submit"
+          className="bg-black text-white py-2 px-4 rounded mt-2"
+        >
+          Search
+        </button>
+      </form>
+      {jobs.length === 0 && (
+        <p className="text-center text-gray-600">No jobs found.</p>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {jobs.map((job) => (
           <Card
@@ -76,7 +71,6 @@ export default function JobOpenings() {
                 radius="sm"
                 src={companyLogo}
                 width={40}
-                className="object-contain"
               />
               <div className="flex flex-col">
                 <p className="text-lg font-bold text-gray-800 line-clamp-1">
@@ -85,6 +79,7 @@ export default function JobOpenings() {
                 <p className="text-sm text-gray-600 line-clamp-1">
                   {job.companyName}
                 </p>
+                <p>No of applications: ({job.applicationCount})</p>
               </div>
             </CardHeader>
 
@@ -95,7 +90,6 @@ export default function JobOpenings() {
                 <p className="text-sm text-gray-700 line-clamp-2">
                   {job.description}
                 </p>
-
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">
@@ -105,7 +99,6 @@ export default function JobOpenings() {
                       {job.location}
                     </span>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">
                       Job Type:
@@ -114,7 +107,6 @@ export default function JobOpenings() {
                       {job.jobType}
                     </span>
                   </div>
-
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-gray-700 whitespace-nowrap">
                       Salary:
@@ -124,7 +116,6 @@ export default function JobOpenings() {
                     </span>
                   </div>
                 </div>
-
                 <div className="mt-4 border-t pt-2">
                   <p className="font-semibold text-gray-800">Posted By:</p>
                   <div className="flex flex-col">
@@ -133,6 +124,14 @@ export default function JobOpenings() {
                     </span>
                     <span className="text-sm text-gray-700">
                       <strong>Company:</strong> {job.createdBy.company}
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      <strong>Posted on:</strong>{" "}
+                      {new Date(job.postedDate).toLocaleString()}
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      <strong>Deadline:</strong>{" "}
+                      {new Date(job.closingDate).toLocaleString()}
                     </span>
                   </div>
                 </div>

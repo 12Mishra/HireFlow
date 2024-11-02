@@ -1,43 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useRecruiterAuth } from '../../hooks/useAuth';
 
 export default function SignupPageRecruiter() {
-  const [rname, setRName] = useState("");
-  const [company, setCompany] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const { rname, setRName, emailRecruiter, setEmailRecruiter, company, setCompany, passwordRecruiter, setPasswordRecruiter, error, success, handleSignupRecruiter } = useRecruiterAuth();
 
-  const navigate = useNavigate();
-
-  async function handleSignup(e) {
-    e.preventDefault();
-
-    setError(""); 
-    setSuccess(""); 
-
-    try {
-      const response = await axios.post("http://localhost:9000/recruiter/auth/signup", {
-        recruitername: rname,
-        company,
-        email,
-        password,
-      }, {
-        withCredentials: true,
-      });
-
-      if (response.status === 201) {
-        setSuccess("Signup successful! Redirecting...");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      }
-    } catch (error) {
-      setError("Error occurred! Please check your credentials.");
-    }
-  }
+  const handleSubmit = (e) => {
+    handleSignupRecruiter(e); // Pass the event directly here
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -48,11 +18,9 @@ export default function SignupPageRecruiter() {
         {error && <p className="text-red-500 text-center">{error}</p>}
         {success && <p className="text-green-500 text-center">{success}</p>}
 
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Recruiter Name
-            </label>
+            <label className="block text-gray-700 mb-2">Recruiter Name</label>
             <input
               type="text"
               id="recruitername"
@@ -64,9 +32,7 @@ export default function SignupPageRecruiter() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Company Name
-            </label>
+            <label className="block text-gray-700 mb-2">Company Name</label>
             <input
               type="text"
               id="company"
@@ -78,30 +44,26 @@ export default function SignupPageRecruiter() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Company Email
-            </label>
+            <label className="block text-gray-700 mb-2">Company Email</label>
             <input
               type="email"
               id="companyemail"
               className="w-full p-2 border rounded"
               placeholder="Enter your Company Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={emailRecruiter}
+              onChange={(e) => setEmailRecruiter(e.target.value)}
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="password">
-              Password
-            </label>
+            <label className="block text-gray-700 mb-2">Password</label>
             <input
               type="password"
               id="password"
               className="w-full p-2 border rounded"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={passwordRecruiter}
+              onChange={(e) => setPasswordRecruiter(e.target.value)}
               required
             />
           </div>
@@ -111,7 +73,6 @@ export default function SignupPageRecruiter() {
           >
             Signup
           </button>
-        
         </form>
       </div>
     </div>

@@ -34,26 +34,19 @@ export async function handleJobOpenings(req, res){
 
 export async function handleSearchedJobs(req, res) {
     try {
-        const searchedTitle = req.body.jobTitle;
-        const searchedCompany = req.body.companyName; 
-        const searchedLocation = req.body.location;
-        const searchedJobType = req.body.jobType;
+        const searchedValue = req.body.searchedValue; 
 
         const query = {
             $or: []
         };
 
-        if (searchedTitle) {
-            query.$or.push({ jobTitle: { $regex: searchedTitle, $options: 'i' } });
-        }
-        if (searchedCompany) {
-            query.$or.push({ companyName: { $regex: searchedCompany, $options: 'i' } });
-        }
-        if (searchedLocation) {
-            query.$or.push({ location: { $regex: searchedLocation, $options: 'i' } });
-        }
-        if (searchedJobType) {
-            query.$or.push({ jobType: { $regex: searchedJobType, $options: 'i' } });
+        if (searchedValue) {
+            query.$or.push(
+                { jobTitle: { $regex: searchedValue, $options: 'i' } },
+                { companyName: { $regex: searchedValue, $options: 'i' } },
+                { location: { $regex: searchedValue, $options: 'i' } },
+                { jobType: { $regex: searchedValue, $options: 'i' } }
+            );
         }
 
         const bodyJson = await JobPosting.find(query);
@@ -62,7 +55,7 @@ export async function handleSearchedJobs(req, res) {
             return res.status(404).json({ message: "No jobs found" });
         }
 
-        res.status(200).json(bodyJson);
+        res.status(200).json({bodyJson});
     } catch (error) {
         res.status(400).json({ message: "Error occurred", error: error.message });
     }

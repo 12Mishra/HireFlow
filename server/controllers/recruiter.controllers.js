@@ -30,7 +30,8 @@ export async function handleSignup(req, res) {
             maxAge: 1000 * 60 * 60 * 24, 
         });
 
-        res.status(201).json({ message: "Recruiter registered successfully." , token});
+        res.status(201).json({ message: "Recruiter registered successfully." });
+
     } catch (error) {
         res.status(500).json({ message: "Server error", error });
     }
@@ -55,7 +56,8 @@ export async function handleSignin(req, res) {
             maxAge: 1000 * 60 * 60 * 24,
         });
 
-        return res.status(200).json({ message: 'Login successful', user: { email }, token: {token}}); 
+        return res.status(200).json({ message: 'Login successful'});
+         
     } catch (error) {
         console.error('Login error:', error);
         return res.status(500).json({
