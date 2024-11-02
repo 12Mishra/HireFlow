@@ -1,41 +1,29 @@
 import mongoose from 'mongoose';
 
 const applicationSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        ref:"JobPosting",
+    userId: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     },
-    email:{
-        type:String,
-        ref:"JobPosting",
+    pastexp: {
+        type: String,
+        required: true
     },
-    location:{
-        type:String,
-        ref:"JobPosting"
+    content: {  // why do you think you fit for this job
+        type: String,
+        required: true
     },
-    aboutme:{
-        type:String,
-        ref:"JobPosting"
+    companyExpectations: {
+        type: String,
+        required: true
     },
-    techskills:{
-        type:[String],
-        ref:"JobPosting"
+    appliedJob: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "JobPosting"
     },
-    degree:{
-        type:[String],
-        ref:"JobPosting"
-    },
-    pastexp:{
-        type:String,
-        required:true
-    },
-    content:{  // why do you think you fit for this job
-        type:String,
-        required:true
-    },
-    companyExpectations:{
-        type:String,
-        required:true
+    accepted:{
+        type: ['Accept', 'Reject', 'Under Review'],
+        default: 'Under Review'
     }
 });
 

@@ -10,6 +10,8 @@ const recruiterSchema = new mongoose.Schema({
     company:{
         type: String,
         required: true,
+        match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'Please enter a valid email']
+
     },
     email: {
         type: String,
@@ -23,6 +25,7 @@ const recruiterSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        match:[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/, 'Please enter a valid password']
     },
     role: {
         type: String,

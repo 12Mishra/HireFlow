@@ -171,15 +171,11 @@ export async function handleJobApplication(req, res) {
         }
 
         const newApplication = new Application({
-            name: user.name,
-            email: user.email,
-            location: user.location,
-            aboutme: user.aboutme,
-            techskills: user.techskills,
-            degree: user.degree,
+            userId: user_id,
             pastexp,
             content,
-            companyExpectations
+            companyExpectations,
+            appliedJob: job_id
         });
         
         job.applicationCount += 1;
@@ -195,3 +191,13 @@ export async function handleJobApplication(req, res) {
     }
 }
 
+export async function handlemyApplications(req, res) {
+    const user_id = req.userPayload.id; 
+    try {
+        const applications = await Application.find({ userId: user_id }).populate('appliedJob');
+        res.status(200).json({ applications });
+    } catch (error) {
+        console.error('Error during fetching applications:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+}

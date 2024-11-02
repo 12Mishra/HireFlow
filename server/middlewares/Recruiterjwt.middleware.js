@@ -12,7 +12,7 @@ function jwtAuthMiddlewareRecruiter(req, res, next) {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_RECRUITER);
         req.recruiterPayload = decoded; 
         next(); 
     } catch (err) {
