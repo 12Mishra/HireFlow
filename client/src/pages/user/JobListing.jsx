@@ -1,3 +1,5 @@
+//individual job details page for user with the help of id
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {

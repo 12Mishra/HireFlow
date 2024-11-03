@@ -4,15 +4,15 @@ import Cookies from "js-cookie";
 
 export default function useSearch() {
   const [searchedValue, setSearchedValue] = useState("");
-  const [jobs, setJobs] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [searchedJobs, setSearchedJobs] = useState([]);
+  const [searchError, setSearchError] = useState("");
+  const [searchLoading, setSearchLoading] = useState(false);
 
   async function handleSearch(e) {
     
     e.preventDefault();
-    setLoading(true);
-    setError("");
+    setSearchLoading(true);
+    setSearchError("");
     
     const token = Cookies.get("authToken");
 
@@ -24,21 +24,21 @@ export default function useSearch() {
       );
 
       if (response.status === 200) {
-        setJobs(response.data.bodyJson);
+        setSearchedJobs(response.data.bodyJson);
       }
     } catch {
-      setError("Error occurred! Could not find requested job.");
+      setSearchError("Error occurred! Could not find requested job.");
     } finally {
-      setLoading(false);
+      setSearchLoading(false);
     }
   }
 
   return {
     searchedValue,
     setSearchedValue,
-    jobs,
-    error,
-    loading,
+    searchedJobs,
+    searchError,
+    searchLoading,
     handleSearch,
   };
 }

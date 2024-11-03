@@ -1,9 +1,12 @@
+//for all jobs to be listed
+
 import {useState , useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 export function useJobListing() {
-  const [searchedJobs, setSearchedJobs] = useState([]);
+
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -33,5 +36,5 @@ export function useJobListing() {
   }, [userCookie]);
 
 
-  return {searchedJobs, loading, error};
+  return {jobs, loading, error};
 }
